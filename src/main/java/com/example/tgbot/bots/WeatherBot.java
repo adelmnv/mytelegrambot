@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +19,7 @@ public class WeatherBot extends TelegramLongPollingBot {
     private WeatherService weatherService;
 
     public WeatherBot(WeatherService weatherService) {
-        super("6057562054:AAGWMDqM2Uuv6JFlfeQZvS0g5JZwBidilgs");
+        super("5808239245:AAHIHwXB950OD-7l2ko__aV6nDoA0SXsQ1A");
         this.weatherService = weatherService;
     }
 
@@ -27,13 +28,21 @@ public class WeatherBot extends TelegramLongPollingBot {
         if(update.hasMessage()&&update.getMessage().hasText()){
             String message = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
-
-            if(message.equals("/weather")){
-                sendText(chatId, "Type city");
-                waitingCity.put(chatId, true);
-            } else if (Boolean.TRUE.equals(waitingCity.get(chatId))) {
-                weatherService.sendWeather(chatId, message, this);
-                waitingCity.put(chatId, false);
+            String name = update.getMessage().getFrom().getUserName() != null ? update.getMessage().getFrom().getUserName() : "little spy";
+            if(message.equals("/start"))
+            {
+                String text = "Hello, "+name;
+                sendText(chatId, text);
+                sendText(chatId, "I can tell you the weather forecast, just send me /weather");
+            }
+            else{
+                if(message.equals("/weather")){
+                    sendText(chatId, "Send me the name of the city");
+                    waitingCity.put(chatId, true);
+                } else if (Boolean.TRUE.equals(waitingCity.get(chatId))) {
+                    weatherService.sendWeather(chatId, message, this);
+                    waitingCity.put(chatId, false);
+                }
             }
         }
     }
@@ -50,6 +59,6 @@ public class WeatherBot extends TelegramLongPollingBot {
     }
     @Override
     public String getBotUsername() {
-        return "your bot username";
+        return "adelmnv_bot";
     }
 }

@@ -2,7 +2,6 @@ package com.example.tgbot;
 
 import com.example.tgbot.bots.WeatherBot;
 import com.example.tgbot.service.WeatherService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -35,7 +34,8 @@ public class TgbotApplication {
 
     @Bean
     public WebClient webClient(){
-        return WebClient.create("");//обрщаение к api погоды
+        return WebClient.create("http://api.openweathermap.org/data/2.5/");//обрщаение к api погоды
     }
+
 
 }
