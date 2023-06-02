@@ -6,8 +6,5 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class AppConfig {
-    @Bean
-    public WebClient webClient(){
-        return WebClient.create("");//обрщаение к api погоды
-    }
+
 }

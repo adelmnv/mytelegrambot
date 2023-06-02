@@ -3,6 +3,7 @@ package com.example.tgbot.bots;
 import com.example.tgbot.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -11,14 +12,16 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Component
 public class WeatherBot extends TelegramLongPollingBot {
     private final Map<Long, Boolean> waitingCity =  new HashMap<>();
+    private WeatherService weatherService;
 
-    public WeatherBot(String botToken) {
-        super(botToken);
-
+    public WeatherBot(WeatherService weatherService) {
+        super("6057562054:AAGWMDqM2Uuv6JFlfeQZvS0g5JZwBidilgs");
+        this.weatherService = weatherService;
     }
+
     @Override
     public void onUpdateReceived(Update update) {
         if(update.hasMessage()&&update.getMessage().hasText()){
@@ -29,12 +32,11 @@ public class WeatherBot extends TelegramLongPollingBot {
                 sendText(chatId, "Type city");
                 waitingCity.put(chatId, true);
             } else if (Boolean.TRUE.equals(waitingCity.get(chatId))) {
-                sendText(chatId, "weather in " + message);
+                weatherService.sendWeather(chatId, message, this);
                 waitingCity.put(chatId, false);
             }
         }
     }
-
 
     public void sendText(Long who, String what){
         SendMessage sm = SendMessage.builder()
